@@ -401,8 +401,9 @@ nav {
 .arrow-btn:hover { color: rgba(255,255,255,0.75); }
 .arrow-btn.hidden { opacity: 0; pointer-events: none; }
 
-.arrow-prev { left: 8px; }
-.arrow-next { right: 8px; }
+/* center arrow in the margin between page edge and video edge */
+.arrow-prev { left: calc((100vw - min(70vw, 900px)) / 4); }
+.arrow-next { right: calc((100vw - min(70vw, 900px)) / 4); }
 
 /* ── progress dots ── */
 .progress-dots {
