@@ -197,18 +197,21 @@ const works = worksData.works.filter(w => w.published);
 
   // ── arrow clicks ──
   btnPrev.addEventListener('click', () => {
-    autoplayEnabled = false;
     if (autoTimer) clearTimeout(autoTimer);
+    autoplayEnabled = false;
     goTo(currentIdx - 1);
+    playSlide(currentIdx - 1 < 0 ? 0 : currentIdx - 1);
   });
 
   btnNext.addEventListener('click', () => {
-    autoplayEnabled = false;
     if (autoTimer) clearTimeout(autoTimer);
-    goTo(currentIdx + 1);
+    autoplayEnabled = false;
+    const next = currentIdx + 1 < total ? currentIdx + 1 : currentIdx;
+    goTo(next);
+    playSlide(next);
   });
 
-  // ── detect manual scroll → disable autoplay ──
+  // ── detect manual scroll → play snapped slide ──
   let scrolling = false;
   track.addEventListener('scroll', () => {
     if (!scrolling) {
@@ -219,7 +222,6 @@ const works = worksData.works.filter(w => w.published);
     clearTimeout((track as any)._scrollEnd);
     (track as any)._scrollEnd = setTimeout(() => {
       scrolling = false;
-      // snap to nearest slide after manual scroll
       const center = track.scrollLeft + track.clientWidth / 2;
       let nearest = 0;
       let minDist = Infinity;
@@ -227,8 +229,11 @@ const works = worksData.works.filter(w => w.published);
         const dist = Math.abs(s.offsetLeft + s.clientWidth / 2 - center);
         if (dist < minDist) { minDist = dist; nearest = i; }
       });
-      currentIdx = nearest;
-      updateUI(nearest);
+      if (nearest !== currentIdx) {
+        currentIdx = nearest;
+        updateUI(nearest);
+        playSlide(nearest);
+      }
     }, 150);
   }, { passive: true });
 
