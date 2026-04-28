@@ -8,13 +8,9 @@
   --bg: #09090f;
   --white: #ffffff;
   --muted: rgba(255, 255, 255, 0.3);
-  --faint: rgba(255, 255, 255, 0.055);
   --amber: #E8A94A;
-  --amber-dim: rgba(232, 169, 74, 0.22);
   --border: rgba(255, 255, 255, 0.07);
-  --card-bg: rgba(255, 255, 255, 0.025);
   --font: 'Inter', 'PingFang SC', 'Helvetica Neue', sans-serif;
-  --card-w: 420px;
 }
 
 html { scroll-behavior: smooth; }
@@ -26,7 +22,6 @@ body {
   font-size: 15px;
   line-height: 1.6;
   min-height: 100vh;
-  position: relative;
   overflow-x: hidden;
 }
 
@@ -124,7 +119,6 @@ nav {
 
 .hero {
   padding: 96px 0 80px;
-  /* large soft radial, fully feathered — no hard edge */
   background: radial-gradient(ellipse 70% 70% at 110% 110%,
     rgba(232,169,74,0.05) 0%,
     rgba(232,169,74,0.02) 50%,
@@ -212,62 +206,48 @@ nav {
 /* ── horizontal timeline ── */
 .timeline { padding: 0 0 80px; }
 
-/* outer wrapper: full bleed so peek works */
+/* full-bleed outer */
 .timeline-outer {
   position: relative;
-  /* negative margin to break out of .page padding */
-  margin: 0 -32px;
 }
 
-/* scroll track */
+/* scroll track — full viewport width */
 .timeline-track {
   overflow-x: auto;
   overflow-y: visible;
   scroll-snap-type: x mandatory;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
-  /* padding so first/last card can center */
-  padding: 0 calc(50vw - var(--card-w) / 2);
-  padding-bottom: 48px;
 }
 .timeline-track::-webkit-scrollbar { display: none; }
-
-/* horizontal line */
-.timeline-track::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 0.5px;
-  background: rgba(255,255,255,0.07);
-  pointer-events: none;
-}
 
 /* cards row */
 .timeline-cards {
   display: flex;
-  gap: 80px;
+  gap: 120px;
   width: max-content;
 }
 
-/* each slide */
+/* each slide — full viewport width */
 .timeline-slide {
-  width: var(--card-w);
+  width: 100vw;
   flex-shrink: 0;
   scroll-snap-align: center;
-  position: relative;
-  padding-top: 0;
-}
-
-/* dot + date */
-.slide-header {
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
+  padding: 0 0 32px;
+}
+
+/* date + dot row */
+.slide-header {
+  width: min(70vw, 900px);
+  display: flex;
+  align-items: center;
+  gap: 10px;
   margin-bottom: 20px;
-  position: relative;
   padding-top: 12px;
+  position: relative;
 }
 
 .slide-dot {
@@ -276,9 +256,7 @@ nav {
   border-radius: 50%;
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.2);
-  position: absolute;
-  top: -3.5px;
-  left: 0;
+  flex-shrink: 0;
   transition: background 0.3s, border-color 0.3s, box-shadow 0.3s;
 }
 .slide-dot.active {
@@ -291,14 +269,19 @@ nav {
   font-size: 11px;
   color: var(--muted);
   letter-spacing: 0.06em;
-  margin-top: 4px;
 }
 
 /* ── work card ── */
 .work-card {
+  width: min(70vw, 900px);
   display: flex;
   flex-direction: column;
   gap: 16px;
+}
+
+/* portrait card narrower */
+.work-card[data-orientation="portrait"] {
+  width: min(360px, 90vw);
 }
 
 .card-text {
@@ -359,7 +342,7 @@ nav {
 .card-video--landscape {
   width: 100%;
   aspect-ratio: 16 / 9;
-  border-radius: 5px;
+  border-radius: 6px;
   overflow: hidden;
   background: rgba(255,255,255,0.04);
 }
@@ -373,23 +356,17 @@ nav {
 
 .card-video--portrait {
   width: 100%;
-  display: flex;
-  justify-content: center;
-  border-radius: 5px;
+  aspect-ratio: 9 / 16;
+  border-radius: 6px;
   overflow: hidden;
+  background: rgba(255,255,255,0.04);
 }
-.card-video--portrait video {
-  max-width: 360px;
-  width: 100%;
-  height: auto;
-  display: block;
-  border-radius: 4px;
-}
+.card-video--portrait video,
 .card-video--portrait img {
-  max-width: 360px;
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
+  object-fit: cover;
 }
 
 .video-placeholder {
@@ -401,24 +378,51 @@ nav {
   color: rgba(255,255,255,0.12);
   font-size: 11px;
   letter-spacing: 0.1em;
-  border-radius: 5px;
+  border-radius: 6px;
   background: rgba(255,255,255,0.04);
 }
 
-/* ── scroll hint arrow ── */
-.scroll-hint {
+/* ── nav arrows ── */
+.arrow-btn {
   position: absolute;
-  right: 16px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 28px;
-  color: rgba(255,255,255,0.25);
-  pointer-events: none;
-  transition: opacity 0.5s ease;
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.3);
+  font-size: 36px;
   line-height: 1;
+  cursor: pointer;
+  padding: 12px 16px;
+  transition: color 0.2s, opacity 0.2s;
+  z-index: 10;
   user-select: none;
 }
-.scroll-hint.hidden { opacity: 0; }
+.arrow-btn:hover { color: rgba(255,255,255,0.75); }
+.arrow-btn.hidden { opacity: 0; pointer-events: none; }
+
+.arrow-prev { left: 8px; }
+.arrow-next { right: 8px; }
+
+/* ── progress dots ── */
+.progress-dots {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+
+.progress-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.2);
+  transition: background 0.3s, transform 0.3s;
+}
+.progress-dot.active {
+  background: var(--amber);
+  transform: scale(1.2);
+}
 
 /* ── footer ── */
 footer {
@@ -454,19 +458,9 @@ footer {
 
 /* ── responsive ── */
 @media (max-width: 720px) {
-  :root { --card-w: 90vw; }
-
   .page, .nav-inner, .footer-inner { padding: 0 20px; }
-
-  .timeline-outer { margin: 0 -20px; }
-
-  .timeline-track {
-    padding: 0 calc(50vw - var(--card-w) / 2);
-    padding-bottom: 48px;
-  }
-
   .hero-stats { gap: 28px; flex-wrap: wrap; }
-
   .nav-right { gap: 16px; }
   .nav-link { display: none; }
+  .arrow-btn { font-size: 28px; padding: 8px 10px; }
 }

@@ -59,52 +59,68 @@ const works = worksData.works.filter(w => w.published);
       </div>
     </div>
   </section>
-
-  <!-- HORIZONTAL TIMELINE -->
-  <section class="timeline" id="works">
-    <p class="section-label">WORKS</p>
-    <div class="timeline-outer">
-      <div class="timeline-track" id="timeline-track">
-        <div class="timeline-cards">
-          {works.map((work) => {
-            const orientation = (work as any).orientation ?? 'landscape';
-            return (
-              <div class="timeline-slide" data-slide={work.id}>
-                <div class="slide-header">
-                  <span class="slide-dot" data-dot={work.id}></span>
-                  <span class="slide-date">{work.year}.{work.month}</span>
-                </div>
-                <div class="work-card" data-card={work.id} data-orientation={orientation}>
-                  <div class="card-text">
-                    <span class="card-id">#{work.id}</span>
-                    <span class="type-badge">{work.type}</span>
-                    <h2 class="card-title">{work.title}</h2>
-                    <p class="card-desc">{work.description}</p>
-                    <div class="card-tags">
-                      {work.tags.map(tag => <span class="tag">{tag}</span>)}
-                    </div>
-                  </div>
-                  {work.videoUrl ? (
-                    <div class={`card-video--${orientation}`}>
-                      <video muted loop playsinline controls preload="none" poster={work.thumbnail}>
-                        <source src={work.videoUrl} type="video/mp4" />
-                      </video>
-                    </div>
-                  ) : work.thumbnail ? (
-                    <div class={`card-video--${orientation}`}>
-                      <img src={work.thumbnail} alt={work.title} onerror="this.style.display='none'" />
-                    </div>
-                  ) : null}
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-      <div class="scroll-hint" id="scroll-hint">›</div>
-    </div>
-  </section>
 </div>
+
+<!-- WORKS — full bleed -->
+<section class="timeline" id="works">
+  <div class="page">
+    <p class="section-label">WORKS</p>
+  </div>
+  <div class="timeline-outer">
+    <!-- prev arrow -->
+    <button class="arrow-btn arrow-prev hidden" id="arrow-prev" aria-label="上一个">‹</button>
+
+    <div class="timeline-track" id="timeline-track">
+      <div class="timeline-cards">
+        {works.map((work) => {
+          const orientation = (work as any).orientation ?? 'landscape';
+          return (
+            <div class="timeline-slide" data-slide={work.id}>
+              <div class="slide-header">
+                <span class="slide-dot" data-dot={work.id}></span>
+                <span class="slide-date">{work.year}.{work.month}</span>
+              </div>
+              <div class="work-card" data-card={work.id} data-orientation={orientation}>
+                <div class="card-text">
+                  <span class="card-id">#{work.id}</span>
+                  <span class="type-badge">{work.type}</span>
+                  <h2 class="card-title">{work.title}</h2>
+                  <p class="card-desc">{work.description}</p>
+                  <div class="card-tags">
+                    {work.tags.map(tag => <span class="tag">{tag}</span>)}
+                  </div>
+                </div>
+                {work.videoUrl ? (
+                  <div class={`card-video--${orientation}`}>
+                    <video muted loop playsinline controls preload="none" poster={work.thumbnail}>
+                      <source src={work.videoUrl} type="video/mp4" />
+                    </video>
+                  </div>
+                ) : work.thumbnail ? (
+                  <div class={`card-video--${orientation}`}>
+                    <img src={work.thumbnail} alt={work.title} onerror="this.style.display='none'" />
+                  </div>
+                ) : (
+                  <div class="video-placeholder">VIDEO COMING SOON</div>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+
+    <!-- next arrow -->
+    <button class="arrow-btn arrow-next" id="arrow-next" aria-label="下一个">›</button>
+  </div>
+
+  <!-- progress dots -->
+  <div class="progress-dots" id="progress-dots">
+    {works.map((work, i) => (
+      <span class={`progress-dot${i === 0 ? ' active' : ''}`} data-pdot={work.id}></span>
+    ))}
+  </div>
+</section>
 
 <!-- FOOTER -->
 <footer id="contact">
@@ -117,95 +133,109 @@ const works = worksData.works.filter(w => w.published);
 </footer>
 
 <script>
-  const track = document.getElementById('timeline-track') as HTMLElement;
-  const slides = Array.from(document.querySelectorAll<HTMLElement>('.timeline-slide'));
-  const hint = document.getElementById('scroll-hint') as HTMLElement;
+  const track    = document.getElementById('timeline-track') as HTMLElement;
+  const slides   = Array.from(document.querySelectorAll<HTMLElement>('.timeline-slide'));
+  const btnPrev  = document.getElementById('arrow-prev') as HTMLButtonElement;
+  const btnNext  = document.getElementById('arrow-next') as HTMLButtonElement;
+  const total    = slides.length;
 
-  let currentId: string | null = null;
+  let currentIdx = 0;
   let autoplayEnabled = true;
-  let autoplayTimer: ReturnType<typeof setTimeout> | null = null;
+  let autoTimer: ReturnType<typeof setTimeout> | null = null;
 
-  // ── dot highlight ──
-  function setActive(id: string) {
-    if (currentId === id) return;
-    if (currentId) {
-      document.querySelector(`[data-dot="${currentId}"]`)?.classList.remove('active');
-      const prev = document.querySelector<HTMLVideoElement>(`[data-card="${currentId}"] video`);
-      prev?.pause();
-    }
-    currentId = id;
+  // ── update UI for current index ──
+  function updateUI(idx: number) {
+    const id = slides[idx].dataset.slide!;
+
+    // dots on timeline
+    document.querySelectorAll('[data-dot]').forEach(d => d.classList.remove('active'));
     document.querySelector(`[data-dot="${id}"]`)?.classList.add('active');
+
+    // progress dots
+    document.querySelectorAll('[data-pdot]').forEach(d => d.classList.remove('active'));
+    document.querySelector(`[data-pdot="${id}"]`)?.classList.add('active');
+
+    // arrows
+    btnPrev.classList.toggle('hidden', idx === 0);
+    btnNext.classList.toggle('hidden', idx === total - 1);
   }
 
-  // ── scroll to slide by index ──
-  function scrollToSlide(idx: number) {
+  // ── scroll to slide ──
+  function goTo(idx: number, behavior: ScrollBehavior = 'smooth') {
+    if (idx < 0 || idx >= total) return;
+    currentIdx = idx;
     const slide = slides[idx];
-    if (!slide) return;
-    const trackRect = track.getBoundingClientRect();
-    const slideRect = slide.getBoundingClientRect();
-    const offset = slideRect.left - trackRect.left - (trackRect.width - slideRect.width) / 2;
-    track.scrollBy({ left: offset, behavior: 'smooth' });
+    const offset = slide.offsetLeft - (track.clientWidth - slide.clientWidth) / 2;
+    track.scrollTo({ left: offset, behavior });
+    updateUI(idx);
   }
 
-  // ── play video for a slide ──
-  function playSlide(id: string) {
-    const video = document.querySelector<HTMLVideoElement>(`[data-card="${id}"] video`);
+  // ── play video ──
+  function playSlide(idx: number) {
+    const id = slides[idx]?.dataset.slide;
+    if (!id) return;
+    // pause all others
+    slides.forEach((s, i) => {
+      if (i !== idx) {
+        s.querySelector<HTMLVideoElement>('video')?.pause();
+      }
+    });
+    const video = slides[idx].querySelector<HTMLVideoElement>('video');
     if (!video) return;
     video.currentTime = 0;
     video.play().catch(() => {});
-
-    // when video ends, advance to next (if autoplay still on)
     video.onended = () => {
       if (!autoplayEnabled) return;
-      const idx = slides.findIndex(s => s.dataset.slide === id);
-      if (idx < slides.length - 1) {
-        autoplayTimer = setTimeout(() => {
-          scrollToSlide(idx + 1);
+      if (idx < total - 1) {
+        autoTimer = setTimeout(() => {
+          goTo(idx + 1);
+          setTimeout(() => playSlide(idx + 1), 850);
         }, 300);
       }
     };
   }
 
-  // ── IntersectionObserver on the track ──
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        if (entry.intersectionRatio >= 0.55) {
-          const id = (entry.target as HTMLElement).dataset.slide!;
-          setActive(id);
-          if (autoplayEnabled) playSlide(id);
-        }
-      });
-    },
-    { root: track, threshold: 0.55 }
-  );
+  // ── arrow clicks ──
+  btnPrev.addEventListener('click', () => {
+    autoplayEnabled = false;
+    if (autoTimer) clearTimeout(autoTimer);
+    goTo(currentIdx - 1);
+  });
 
-  slides.forEach(s => observer.observe(s));
+  btnNext.addEventListener('click', () => {
+    autoplayEnabled = false;
+    if (autoTimer) clearTimeout(autoTimer);
+    goTo(currentIdx + 1);
+  });
 
-  // ── scroll hint: hide on first user scroll ──
-  let hintHidden = false;
+  // ── detect manual scroll → disable autoplay ──
+  let scrolling = false;
   track.addEventListener('scroll', () => {
-    if (!hintHidden) {
-      hintHidden = true;
-      hint.classList.add('hidden');
-      // user scrolled manually — pause autoplay
+    if (!scrolling) {
+      scrolling = true;
       autoplayEnabled = false;
-      if (autoplayTimer) clearTimeout(autoplayTimer);
+      if (autoTimer) clearTimeout(autoTimer);
     }
+    clearTimeout((track as any)._scrollEnd);
+    (track as any)._scrollEnd = setTimeout(() => {
+      scrolling = false;
+      // snap to nearest slide after manual scroll
+      const center = track.scrollLeft + track.clientWidth / 2;
+      let nearest = 0;
+      let minDist = Infinity;
+      slides.forEach((s, i) => {
+        const dist = Math.abs(s.offsetLeft + s.clientWidth / 2 - center);
+        if (dist < minDist) { minDist = dist; nearest = i; }
+      });
+      currentIdx = nearest;
+      updateUI(nearest);
+    }, 150);
   }, { passive: true });
 
-  // ── init: scroll first slide into center & start autoplay ──
-  // wait for layout
+  // ── init ──
   requestAnimationFrame(() => {
-    scrollToSlide(0);
-    // small delay so scroll settles before observer fires
-    setTimeout(() => {
-      const firstId = slides[0]?.dataset.slide;
-      if (firstId) {
-        setActive(firstId);
-        playSlide(firstId);
-      }
-    }, 400);
+    goTo(0, 'instant');
+    setTimeout(() => playSlide(0), 300);
   });
 </script>
 
