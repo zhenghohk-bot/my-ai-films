@@ -174,10 +174,7 @@ nav {
   line-height: 1.1;
   letter-spacing: -0.02em;
   margin-bottom: 20px;
-}
-
-.hero-title .dim {
-  color: rgba(255, 255, 255, 0.18);
+  color: rgba(255, 255, 255, 0.88);
 }
 
 .hero-sub {
@@ -402,13 +399,37 @@ nav {
 
 /* video area */
 .card-video {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 16 / 9;
   border-radius: 5px;
   overflow: hidden;
   background: rgba(255, 255, 255, 0.04);
   flex-shrink: 0;
+}
+
+/* landscape: fill the column width at 16:9 */
+.card-video--landscape {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+}
+
+.card-video--landscape video {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* portrait: centered, max 400px wide */
+.card-video--portrait {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.card-video--portrait video {
+  max-width: 400px;
+  width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 4px;
 }
 
 .card-video img {
@@ -416,59 +437,17 @@ nav {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: opacity 0.3s;
-}
-
-.card-video iframe {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  border: none;
 }
 
 .video-placeholder {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 16 / 9;
   display: flex;
   align-items: center;
   justify-content: center;
   color: rgba(255, 255, 255, 0.12);
   font-size: 11px;
   letter-spacing: 0.1em;
-}
-
-/* play icon overlay on thumbnail */
-.play-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0;
-  transition: opacity 0.2s;
-}
-
-.card-video:hover .play-overlay {
-  opacity: 1;
-}
-
-.play-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(0, 0, 0, 0.55);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.play-icon svg {
-  width: 14px;
-  height: 14px;
-  fill: white;
-  margin-left: 2px;
 }
 
 /* ── footer ── */

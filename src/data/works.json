@@ -8,8 +8,9 @@
       "month": "03",
       "description": "森林没有边界。羊头的守林者在雾中踱步，鱼脸的水鬼沉于无声深潭。误入者的第 36 小时，认知开始崩解。肉食管理者是唯一的庇护——但找到他之前，你还剩多少清醒。",
       "tags": ["奇幻", "悬疑", "超自然生物", "认知污染"],
-      "videoUrl": "",
+      "videoUrl": "https://aifilms.oss-cn-shanghai.aliyuncs.com/my-ai-films/1.mp4",
       "thumbnail": "/thumbnails/001.jpg",
+      "orientation": "landscape",
       "published": true
     },
     {
@@ -20,8 +21,9 @@
       "month": "03",
       "description": "一只猫，一个女人，一副墨镜。慵懒与锐利，野性与优雅，在同一帧里共存。",
       "tags": ["商业广告", "猫", "Sunglasses", "时尚"],
-      "videoUrl": "",
+      "videoUrl": "https://aifilms.oss-cn-shanghai.aliyuncs.com/my-ai-films/2.mp4",
       "thumbnail": "/thumbnails/002.jpg",
+      "orientation": "portrait",
       "published": true
     },
     {
@@ -34,6 +36,7 @@
       "tags": ["青春", "爱情", "重逢", "梧桐"],
       "videoUrl": "",
       "thumbnail": "/thumbnails/003.jpg",
+      "orientation": "portrait",
       "published": true
     }
   ]
