@@ -8,7 +8,7 @@
       "month": "03",
       "description": "森林没有边界。羊头的守林者在雾中踱步，鱼脸的水鬼沉于无声深潭。误入者的第 36 小时，认知开始崩解。肉食管理者是唯一的庇护——但找到他之前，你还剩多少清醒。",
       "tags": ["奇幻", "悬疑", "超自然"],
-      "videoUrl": "https://aifilms.oss-cn-shanghai.aliyuncs.com/my-ai-films/2.mp4",
+      "videoUrl": "https://aifilms-1426896086.cos.ap-shanghai.myqcloud.com/2.mp4",
       "thumbnail": "/thumbnails/001.jpg",
       "orientation": "landscape",
       "published": true
@@ -21,7 +21,7 @@
       "month": "03",
       "description": "一只猫，一个女人，一副墨镜。慵懒与锐利，野性与优雅，在同一帧里共存。",
       "tags": ["商业广告", "时尚"],
-      "videoUrl": "https://aifilms.oss-cn-shanghai.aliyuncs.com/my-ai-films/1.mp4",
+      "videoUrl": "https://aifilms-1426896086.cos.ap-shanghai.myqcloud.com/1.mp4",
       "thumbnail": "/thumbnails/002.jpg",
       "orientation": "portrait",
       "published": true
@@ -34,7 +34,7 @@
       "month": "03",
       "description": "梧桐叶落的速度，和心跳加速的速度，意外地一致。青春不是记忆，是某个下午光线的角度，和对方没来得及收回的眼神。",
       "tags": ["青春"],
-      "videoUrl": "https://aifilms.oss-cn-shanghai.aliyuncs.com/%E4%B9%A6%E7%AD%BE.mov",
+      "videoUrl": "https://aifilms-1426896086.cos.ap-shanghai.myqcloud.com/%E4%B9%A6%E7%AD%BE.mov",
       "thumbnail": "/thumbnails/003.jpg",
       "orientation": "portrait",
       "published": true
